@@ -49,13 +49,9 @@ transform = transforms.Compose([
 # Download and load the training set
 train_dataset = datasets.MNIST(root='./data', train=True, transform=transform, download=True)
 
-# Download and load the test set
-test_dataset = datasets.MNIST(root='./data', train=False, transform=transform, download=True)
 
 # Create data loaders to iterate through the dataset
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=64, shuffle=False)
-
 
 # Instantiate the model, loss function, and optimizer
 model = SimpleNN()
@@ -86,18 +82,5 @@ for epoch in range(EPOCHS):  # 5 epochs for demonstration
 
     print(f"Epoch {epoch+1}, Training Loss: {running_loss/len(train_loader)}, Training Accuracy: {(correct_train/total_train) * 100:.2f}%")
 
-# Evaluation on test set
-test_loss = 0
-correct_test = 0
-total_test = 0
-with torch.no_grad():
-    for images, labels in test_loader:
-        outputs = model(images)  # Forward pass
-        loss = criterion(outputs, labels)  # Calculate loss
-        test_loss += loss.item()
-
-        _, predicted = torch.max(outputs.data, 1)
-        total_test += labels.size(0)
-        correct_test += (predicted == labels).sum().item()
-
-print(f"Testing Loss: {test_loss/len(test_loader)}, Testing Accuracy: {(correct_test/total_test) * 100:.2f}%")
+# Save the entire model
+torch.save(model.state_dict(), 'simple_nn_model_MNIST.pth')
